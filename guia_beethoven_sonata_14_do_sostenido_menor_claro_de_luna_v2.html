@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beethoven: Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34; - Guía Interactiva</title>
+  <style>
+    /* --- CSS 100% Autocontenido: Tipografías del Sistema y Cero Dependencias --- */
+    :root {
+      --bg-primary: #0f141c;
+      --bg-secondary: #171f2c;
+      --bg-card: #1e2838;
+      --bg-card-hover: #263347;
+      --accent-gold: #e5b567;
+      --accent-blue: #60a5fa;
+      --accent-cyan: #38bdf8;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --border-color: #2d3b52;
+      --highlight-bg: rgba(229, 181, 103, 0.12);
+      --highlight-border: #e5b567;
+      --rh-color: #38bdf8;
+      --lh-color: #a78bfa;
+      --warning-bg: rgba(234, 88, 12, 0.15);
+      --warning-border: #ea580c;
+      --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, Palatino, Georgia, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-bottom: 90px; /* Espacio para el reproductor fijo */
+    }
+
+    header {
+      background: linear-gradient(180deg, #161e2b 0%, #0f141c 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .header-badge {
+      display: inline-block;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent-gold);
+      background: rgba(229, 181, 103, 0.12);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      margin-bottom: 0.85rem;
+      border: 1px solid rgba(229, 181, 103, 0.25);
+    }
+
+    h1.album-title {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .album-meta {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .album-meta span {
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .album-details {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+    }
+
+    .album-details div {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* --- Selector de Pistas --- */
+    .track-selector-bar {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      overflow-x: auto;
+    }
+
+    .track-selector-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .track-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .track-tab-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .track-tab-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    .track-tab-btn.active {
+      background: var(--accent-gold);
+      color: #0f141c;
+      font-weight: 700;
+      border-color: var(--accent-gold);
+    }
+
+    /* --- Contenedor Principal de la Pista --- */
+    main.container {
+      max-width: 1000px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1.25rem;
+      flex: 1;
+    }
+
+    .track-view {
+      display: none;
+    }
+
+    .track-view.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Ficha de Información de la Pista --- */
+    .track-header-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .track-heading-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .track-main-title {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: #fff;
+    }
+
+    .track-duration-pill {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      background: rgba(96, 165, 250, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+    }
+
+    .track-info-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    @media (min-width: 768px) {
+      .track-info-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .info-block h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .info-block p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .audit-warning-box {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      color: #fed7aa;
+      font-size: 0.9rem;
+    }
+
+    .audit-warning-box strong {
+      color: #fb923c;
+    }
+
+    /* --- Lista de Hitos Musicales --- */
+    .milestones-section-title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: var(--text-main);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .milestones-section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+
+    .milestones-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .milestone-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      transition: all 0.25s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .milestone-card:hover {
+      background: var(--bg-card);
+      border-color: #3b4c68;
+    }
+
+    /* Estado Activo sincronizado con el cronómetro */
+    .milestone-card.active {
+      background: var(--highlight-bg);
+      border-color: var(--highlight-border);
+      box-shadow: 0 0 20px rgba(229, 181, 103, 0.18);
+      transform: scale(1.01);
+    }
+
+    .milestone-card.active::before {
+      content: "▶ ESCUCHANDO AHORA";
+      position: absolute;
+      top: -10px;
+      right: 1.25rem;
+      background: var(--accent-gold);
+      color: #0f141c;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 0.15rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .milestone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .milestone-tag {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      background: rgba(229, 181, 103, 0.15);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .milestone-name {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .what-to-listen {
+      font-size: 1rem;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+      line-height: 1.55;
+    }
+
+    /* Desglose Mano Derecha / Mano Izquierda */
+    .hands-breakdown {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+
+    @media (min-width: 640px) {
+      .hands-breakdown {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .hand-box {
+      background: rgba(15, 20, 28, 0.6);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      border-left: 3px solid transparent;
+    }
+
+    .hand-box.right-hand {
+      border-left-color: var(--rh-color);
+    }
+
+    .hand-box.left-hand {
+      border-left-color: var(--lh-color);
+    }
+
+    .hand-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .right-hand .hand-label {
+      color: var(--rh-color);
+    }
+
+    .left-hand .hand-label {
+      color: var(--lh-color);
+    }
+
+    .hand-box p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .pedagogical-tip {
+      background: rgba(96, 165, 250, 0.08);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 4px;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.85rem;
+      color: #bfdbfe;
+    }
+
+    .pedagogical-tip strong {
+      color: var(--accent-blue);
+    }
+
+    /* Fuentes y Evidencia */
+    .sources-accordion {
+      margin-top: 2.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+
+    .sources-accordion summary {
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      outline: none;
+    }
+
+    .sources-accordion summary:hover {
+      color: var(--text-main);
+    }
+
+    .sources-list {
+      margin-top: 0.75rem;
+      padding-left: 1.25rem;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+
+    .sources-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* --- Barra Inferior Fija: Cronómetro Sincronizador --- */
+    .player-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #111823;
+      border-top: 1px solid #2d3b52;
+      box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.5);
+      padding: 0.75rem 1.5rem;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .player-progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: #1f2937;
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e5b567 0%, #38bdf8 100%);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .player-controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .player-track-info {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 250px;
+    }
+
+    .player-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ctrl-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-gold);
+    }
+
+    .ctrl-btn.play-btn {
+      background: var(--accent-gold);
+      color: #0f141c;
+      border-color: var(--accent-gold);
+      padding: 0.45rem 1.25rem;
+      font-weight: 700;
+    }
+
+    .ctrl-btn.play-btn:hover {
+      background: #f0c37b;
+    }
+
+    .time-display {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      min-width: 110px;
+      text-align: right;
+    }
+
+    .sync-hint {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      display: none;
+    }
+
+    @media (min-width: 850px) {
+      .sync-hint {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado de la Obra y Álbum -->
+  <header>
+    <div class="header-badge">Guía de Escucha Musical</div>
+    <h1 class="album-title">Beethoven: Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;</h1>
+    
+    <div style="font-size: 0.95rem; color: var(--text-dim); margin-top: -0.2rem; margin-bottom: 0.75rem;">
+      Del álbum: <em>Beethoven: Piano Sonatas (Moonlight, Pathétique &amp; Appassionata)</em>
+    </div>
+    
+    <div class="album-meta">
+      Compositor: <span>Beethoven</span> &nbsp;•&nbsp;
+      Intérprete: <span>Daniel Barenboim</span>
+    </div>
+    <div class="album-details">
+      <div>📅 <span>Año: 1987</span></div>
+      
+      <div>🎵 <span>3 Pistas</span></div>
+      <div>⏱️ <span>Sincronización manual para Apple Music</span></div>
+    </div>
+  </header>
+
+  <!-- Barra de Pestañas / Selector de Pistas -->
+  <nav class="track-selector-bar">
+    <div class="track-selector-label">Pistas del Álbum:</div>
+    <div class="track-tabs" id="trackTabsContainer">
+      
+      <button class="track-tab-btn active"
+              data-track-index="0"
+              data-duration="400"
+              data-title="Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: I. Adagio sostenuto">
+        1. Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: I. Adagio sostenuto
+      </button>
+      
+      <button class="track-tab-btn "
+              data-track-index="1"
+              data-duration="132"
+              data-title="Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: II. Allegretto">
+        2. Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: II. Allegretto
+      </button>
+      
+      <button class="track-tab-btn "
+              data-track-index="2"
+              data-duration="462"
+              data-title="Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: III. Presto">
+        3. Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: III. Presto
+      </button>
+      
+    </div>
+  </nav>
+
+  <!-- Contenido de las Pistas -->
+  <main class="container">
+    
+    <article class="track-view active"
+             id="track-view-0"
+             data-track-index="0"
+             data-duration="400">
+
+      <!-- Ficha de Encabezado de la Pista -->
+      <section class="track-header-card">
+        <div class="track-heading-row">
+          <h2 class="track-main-title">1. Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: I. Adagio sostenuto</h2>
+          <div class="track-duration-pill">Duración: 6:40</div>
+        </div>
+
+        <div class="track-info-grid">
+          <div class="info-block">
+            <h4>Contexto Histórico</h4>
+            <p>Compuesta en 1801 y dedicada a la condesa Giulietta Guicciardi, la Sonata Op. 27 n.º 2 fue subtitulada por Beethoven &#39;Sonata quasi una fantasia&#39;. El sobrenombre &#39;Claro de luna&#39; fue acuñado en 1832 por el crítico Ludwig Rellstab, quien comparó el primer movimiento con el reflejo de la luna sobre el lago Lucerna. Rompe la tradición clásica al comenzar con un movimiento lento y meditativo en lugar del enérgico Allegro habitual.</p>
+          </div>
+          <div class="info-block">
+            <h4>Arquitectura y Estructura Formal</h4>
+            <p>Forma sonata modificada en compás alla breve (2/2) y tonalidad de Do sostenido menor. Estructura: Introducción hipnótica (c. 1-4), Exposición con primer tema en Do# menor y segundo tema en Si mayor / Fa# menor (c. 5-23), Breve Desarrollo centrado en una nota pedal de dominante sobre Sol# (c. 23-41), Reexposición (c. 42-59) y Coda conclusiva (c. 60-69).</p>
+          </div>
+        </div>
+
+        
+      </section>
+
+      <!-- Hitos Musicales -->
+      <section>
+        <h3 class="milestones-section-title">Hitos Musicales y Guía de Escucha</h3>
+        <div class="milestones-list" id="milestones-list-0">
+          
+          <div class="milestone-card"
+               id="m-0-1"
+               data-start="0"
+               data-end="35"
+               onclick="seekToSecond(0)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 00:00 - 00:35</span>
+              <h4 class="milestone-name">Introducción y Olas de Tresillos</h4>
+            </div>
+
+            <p class="what-to-listen">Escucha el ambiente nocturno y sereno que se crea de inmediato. Los tresillos de corchea fluyen como olas suaves en un tempo muy pausado y controlado.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Realiza el patrón continuo de tresillos arpegiados en registro medio, manteniendo una articulación legato muy uniforme y delicada sin acentuar notas individuales.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Sostiene octavas graves profundas (Do#), marcando el pulso fundamental con peso constante y sonoridad redonda pero suave.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Mantén la muñeca relajada y usa un ligero balanceo para que el flujo de tresillos suene homogéneo como una brisa.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-1-2"
+               data-start="35"
+               data-end="85"
+               onclick="seekToSecond(35)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 00:35 - 01:25</span>
+              <h4 class="milestone-name">Exposición: Tema Principal</h4>
+            </div>
+
+            <p class="what-to-listen">Entra la famosa melodía impregnada de melancolía. Observa cómo la voz melódica flota de forma independiente sobre el acompañamiento ondulante.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Canta la melodía superior con el característico ritmo con puntillo (sol#-fa#-sol#), destacando la nota superior con el dedo meñique mientras los dedos internos continúan los tresillos suaves.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Desciende gradualmente por pasos armónicos de bajo (Do#, Si, La, Sol#), proveyendo una base armónica sólida y sombría.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Visualiza dos capas en la mano derecha: el dedo meñique canta con peso de brazo mientras los dedos 1-2-3 rozan las teclas apenas suavemente.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-2-3"
+               data-start="85"
+               data-end="130"
+               onclick="seekToSecond(85)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 01:25 - 02:10</span>
+              <h4 class="milestone-name">Exposición: Segundo Tema y Transición</h4>
+            </div>
+
+            <p class="what-to-listen">La música modula hacia Si mayor y Fa sostenido menor. Nota cómo el carácter se vuelve levemente más inquieto sin perder el pulso medido.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Sostiene notas de la melodía en valores más largos (blancas y negras) mientras mantiene el tejido continuo de tresillos por debajo.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Aumenta la actividad pulsando notas en negras que dialogan con el bajo, creando un soporte armónico con mayor direccionalidad.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Presta atención a los cambios de color armónico y evita precipitar el tempo en los momentos de mayor tensión.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-3-4"
+               data-start="130"
+               data-end="250"
+               onclick="seekToSecond(130)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 02:10 - 04:10</span>
+              <h4 class="milestone-name">Desarrollo y Nota Pedal de Dominante</h4>
+            </div>
+
+            <p class="what-to-listen">Se intensifica la tensión dramática. Escucha la nota grave grave (Sol#) que se repite obstinadamente mientras los tresillos ascienden y descienden en dinámica crescendo.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Ejecuta frases de tresillos que se expanden a registros más agudos y luego descienden, añadiendo matices de claroscuro y pequños matices dinámicos.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Mantiene con firmeza la nota pedal de dominante (Sol#) en el grave, acumulando la energía armónica que conducirá al retorno del tema principal.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Siente la tensión retenida sobre el pedal de dominante; el secreto pedagógico es no acelerar el pulso aunque la intensidad aumente.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-4-5"
+               data-start="250"
+               data-end="340"
+               onclick="seekToSecond(250)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 04:10 - 05:40</span>
+              <h4 class="milestone-name">Reexposición</h4>
+            </div>
+
+            <p class="what-to-listen">El tema inicial regresa en la tonalidad principal de Do sostenido menor. La sensación es de resignación poética y profunda serenidad tras la tormenta del desarrollo.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Reexpone la frase melódica con ritmo con puntillo con un toque aún más intimista y un fraseo exquisitamente legado.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Retoma las octavas solemnes en el registro grave, sirviendo de ancla tonal impecable.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Escucha la calidad del sonido en esta reexposición; busca la máxima profundidad tímbrica tocando al fondo de la tecla.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-5-6"
+               data-start="340"
+               data-end="400"
+               onclick="seekToSecond(340)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 05:40 - 06:40</span>
+              <h4 class="milestone-name">Coda y Final</h4>
+            </div>
+
+            <p class="what-to-listen">La pieza se encamina hacia su extinción final. Un murmullo en el registro más grave antecede al reposo definitivo en dos acordes solemnes.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Desciende hacia el registro medio-grave realizando arpegios susurrados que van perdiendo intensidad hasta apagarse en el acorde final.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Acompaña con motivos oscuros en el bajo y concluye con octavas definitivas en Do sostenido menor.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Sostén el pedal de resonancia en el acorde final y escucha cómo el sonido se disipa en el aire antes de retirar las manos del teclado.
+            </div>
+            
+
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- Evidencia y Fuentes -->
+      
+      <details class="sources-accordion">
+        <summary>📚 Fuentes consultadas y referencias musicológicas</summary>
+        <ul class="sources-list">
+          
+          <li>Fuente [1] Tonic Chord: &#39;First Movement (Adagio Sostenuto) Form: Sonata Form. C# minor. [...] Bars 23-42: Development [...] Bars 42-46: Recapitulation.&#39;</li>
+          
+          <li>Fuente [2] Musicalibra: &#39;At m. 28 V of C♯ minor appears and is prolonged, forming a retransition [...] Up to the start of the recapitulation at m. 42, a G♯ pedal is sustained.&#39;</li>
+          
+          <li>Fuente [3] Private Piano NYC: &#39;Ludwig Rellstab coined the moniker in 1832... comparing the first movement&#39;s atmosphere to moonlight shining over Lake Lucerne.&#39;</li>
+          
+          <li>Fuente [5] Wikipedia: &#39;The first movement, in C♯ minor and alla breve, is written in modified sonata-allegro form.&#39;</li>
+          
+        </ul>
+      </details>
+      
+
+    </article>
+    
+    <article class="track-view "
+             id="track-view-1"
+             data-track-index="1"
+             data-duration="132">
+
+      <!-- Ficha de Encabezado de la Pista -->
+      <section class="track-header-card">
+        <div class="track-heading-row">
+          <h2 class="track-main-title">2. Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: II. Allegretto</h2>
+          <div class="track-duration-pill">Duración: 2:12</div>
+        </div>
+
+        <div class="track-info-grid">
+          <div class="info-block">
+            <h4>Contexto Histórico</h4>
+            <p>Compuesta entre 1801 y 1802, la Sonata No. 14 de Beethoven rompió los esquemas del Clasicismo. Tras la atmósfera melancólica del primer movimiento, este Allegretto actúa como un elegante respiro en Re bemol mayor (equivalente enarmónico de Do sostenido mayor). El célebre compositor Franz Liszt definió célebremente este movimiento como &#39;una flor entre dos abismos&#39;, al situarse justo entre la quietud hipnótica del Adagio inicial y la tormenta virtuosa del Presto agitato final.</p>
+          </div>
+          <div class="info-block">
+            <h4>Arquitectura y Estructura Formal</h4>
+            <p>Forma Ternaria (A - B - A&#39; con Trio). La sección A presenta un elegante minueto en compás de 3/4 con frases simétricas y articulaciones gráciles. La sección B (Trio) aporta un carácter más terrenal y rítmicamente afianzado antes de volver a la repetición del minueto original (Da Capo).</p>
+          </div>
+        </div>
+
+        
+      </section>
+
+      <!-- Hitos Musicales -->
+      <section>
+        <h3 class="milestones-section-title">Hitos Musicales y Guía de Escucha</h3>
+        <div class="milestones-list" id="milestones-list-1">
+          
+          <div class="milestone-card"
+               id="m-0-1"
+               data-start="0"
+               data-end="45"
+               onclick="seekToSecond(0)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 00:00 - 00:45</span>
+              <h4 class="milestone-name">Sección A: Tema Principal de Minueto</h4>
+            </div>
+
+            <p class="what-to-listen">Escucha la ligereza y elegancia de la danza. El ambiente cambia radicalmente respecto al primer movimiento: pasamos de la oscuridad a una luz amable. Destacan las dinámicas suaves en &#39;piano&#39; interrumpidas por pequeños acentos juguetones (sforzandi).</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Toca frases de dos notas con articulación caída-levantado (ligadura de expresión corta) y suaves acordes staccato que flotan en el registro medio-alto.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Marca el pulso de 3/4 con notas fundamentales sencillas y acordes de apoyo en el registro grave, manteniendo una base rítmica estable pero flexible.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Visualiza el gesto de la mano derecha como el vuelo de una mariposa: desciende suavemente en la primera nota y levanta la muñeca con ligereza en la segunda.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-1-2"
+               data-start="45"
+               data-end="85"
+               onclick="seekToSecond(45)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 00:45 - 01:25</span>
+              <h4 class="milestone-name">Sección B: Trio</h4>
+            </div>
+
+            <p class="what-to-listen">El tono se vuelve más afirmativo y rítmico. Notarás un contraste de textura: las notas se sostienen más (legato) y hay un impulso armónico más terrenal y rotundo que contrasta con la fragilidad de la primera parte.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Ejecuta melodías en octavas y acordes ligados de mayor sonoridad, exigiendo un peso de brazo constante y un fraseo bien sostenido.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Acompaña con síncopas y acentos contratiempo, marcando bajos profundos que dan firmeza a la progresión armónica.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Siente el peso natural de los hombros cayendo hacia las yemas de los dedos para lograr ese tono &#39;cantabile&#39; rico y pleno sin forzar las muñecas.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-2-3"
+               data-start="85"
+               data-end="132"
+               onclick="seekToSecond(85)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 01:25 - 02:12</span>
+              <h4 class="milestone-name">Sección A&#39;: Reexposición (Da Capo al Fine)</h4>
+            </div>
+
+            <p class="what-to-listen">Regreso al tema inicial del minueto. Observa cómo Barenboim retoma la delicadeza del comienzo, concluyendo el movimiento con una pausa contenida antes del estallido del movimiento final.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Reaparece el motivo articulado y grácil del inicio, cerrando con pequeños acordes secos y precisos en el registro medio.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Retoma los bajos staccato y los apoyos armónicos breves, descendiendo en volumen hasta un suave desvanecimiento final.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Presta atención al silencio final justo en el segundo 132; es el respiro previo a la tempestad del Presto agitato.
+            </div>
+            
+
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- Evidencia y Fuentes -->
+      
+      <details class="sources-accordion">
+        <summary>📚 Fuentes consultadas y referencias musicológicas</summary>
+        <ul class="sources-list">
+          
+          <li>Fuente [1]: &#39;The second movement is a relatively conventional minuet in triple time [...] Franz Liszt is said to have described the second movement as a flower between two chasms.&#39;</li>
+          
+          <li>Fuente [2]: &#39;Second Movement (Allegretto) Form: Ternary Form. Db Major.&#39;</li>
+          
+          <li>Fuente [4]: &#39;Beethoven: Piano Sonata No. 14 Moonlight Sonata | Daniel Barenboim. 06:45 II. Allegretto&#39;.</li>
+          
+        </ul>
+      </details>
+      
+
+    </article>
+    
+    <article class="track-view "
+             id="track-view-2"
+             data-track-index="2"
+             data-duration="462">
+
+      <!-- Ficha de Encabezado de la Pista -->
+      <section class="track-header-card">
+        <div class="track-heading-row">
+          <h2 class="track-main-title">3. Piano Sonata No. 14 in C-Sharp Minor, Op. 27 No. 2 &#34;Moonlight&#34;: III. Presto</h2>
+          <div class="track-duration-pill">Duración: 7:42</div>
+        </div>
+
+        <div class="track-info-grid">
+          <div class="info-block">
+            <h4>Contexto Histórico</h4>
+            <p>Compuesta en 1801 y publicada en 1802 con dedicatoria a la condesa Giulietta Guicciardi, esta sonata rompió con el molde clásico tradicional de tres movimientos (rápido-lento-rápido). Beethoven tituló la obra &#39;Sonata quasi una fantasia&#39; situando el peso emocional y la máxima velocidad en el movimiento final. Franz Liszt describió poéticamente el movimiento central como una flor entre dos abismos, siendo este Presto agitato el abismo final de pura energía y tormenta romántica.</p>
+          </div>
+          <div class="info-block">
+            <h4>Arquitectura y Estructura Formal</h4>
+            <p>Forma Sonata estricta pero hiper-expresiva compuesta por Exposición (Tema A en do sostenido menor y Tema B en sol sostenido menor), Desarrollo agitado, Reexposición y una monumental Coda final con cadencia virtuosa.</p>
+          </div>
+        </div>
+
+        
+      </section>
+
+      <!-- Hitos Musicales -->
+      <section>
+        <h3 class="milestones-section-title">Hitos Musicales y Guía de Escucha</h3>
+        <div class="milestones-list" id="milestones-list-2">
+          
+          <div class="milestone-card"
+               id="m-0-1"
+               data-start="0"
+               data-end="60"
+               onclick="seekToSecond(0)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 00:00 - 01:00</span>
+              <h4 class="milestone-name">Exposición: Tema Principal A (Arpegios explosivos)</h4>
+            </div>
+
+            <p class="what-to-listen">Escucha cómo la música comienza con un murmullo veloz y misterioso en piano (p) que sube como una ola volcánica hasta estallar en dos acordes acentuados fuertemente (sforzando). El carácter es de pura agitación y urgencia dramática.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Ejecuta veloces arpegios ascendentes en semicorcheas a lo largo del teclado. Requiere articulación uniforme y flexible, rematando cada frase con dos acordes secos y contundentes en el registro agudo.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Proporciona el pulso rítmico mediante notas en staccato y bajo continuo que marcan los tiempos fuertes, dando solidez y soporte armónico antes de los acordes de cierre de frase.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Mantén la muñeca muy suelta al subir por el arpegio para no acumular tensión antes de golpear los dos acordes finales.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-1-2"
+               data-start="60"
+               data-end="130"
+               onclick="seekToSecond(60)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 01:00 - 02:10</span>
+              <h4 class="milestone-name">Exposición: Tema Secundario B (Línea cantarila y tensa)</h4>
+            </div>
+
+            <p class="what-to-listen">El tono cambia hacia una melodía más expresiva y suplicante en tono menor (sol sostenido menor). Aunque la mano derecha intenta cantar una línea lírica, se siente un pulso interno incesante que no deja descansar la pieza.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Canta la melodía principal con fraseo sostenido (legato) en los dedos superiores, acentuando las notas largas con un peso de brazo controlado mientras mantiene la claridad melódica.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Realiza un acompañamiento continuo estilo bajo de Alberti extendido o corcheas fluidas que generan un colchón armónico inquieto sin tapar la melodía derecha.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Imagina que la mano derecha es la voz de un cantante de ópera mientras la mano izquierda imita el murmullo de las cuerdas de una orquesta.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-2-3"
+               data-start="130"
+               data-end="195"
+               onclick="seekToSecond(130)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 02:10 - 03:15</span>
+              <h4 class="milestone-name">Exposición: Codetta y Repetición / Transición</h4>
+            </div>
+
+            <p class="what-to-listen">Acordes martilleantes en staccato y trinos dramáticos marcan la conclusión de la exposición. La tensión se acumula mediante cambios dinámicos abruptos entre piano y forte.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Realiza acordes repetidos con firmeza y pequeñas ráfagas de notas rápidas y trinos de adorno que deben sonar cristalinos y enérgicos.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Acompaña con octavas profundas en el bajo que refuerzan los cambios de armonía y aumentan el dramatismo antes de reiniciar el tema principal.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Utiliza el peso de todo el antebrazo para los acordes fortes sin golpear las teclas desde muy alto.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-3-4"
+               data-start="195"
+               data-end="275"
+               onclick="seekToSecond(195)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 03:15 - 04:35</span>
+              <h4 class="milestone-name">Desarrollo (Modulaciones y tormenta armónica)</h4>
+            </div>
+
+            <p class="what-to-listen">Los temas escuchados previamente comienzan a fragmentarse y a viajar por distintas tonalidades inesperadas. Es la sección de mayor inestabilidad emocional de la obra.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Alterna entre arpegios tempestuosos que suben y bajan y momentos de notas tenidas que buscan una resolución que se posterga constantemente.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Toma un papel mucho más activo y agresivo con pedal de octavas bajas y diseños arpegiados que responden a la mano derecha en un diálogo tenso.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Presta atención a los cambios de tono: escucha cómo el color de la música pasa de oscuro a brillante y vuelve a oscurecerse.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-4-5"
+               data-start="275"
+               data-end="360"
+               onclick="seekToSecond(275)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 04:35 - 06:00</span>
+              <h4 class="milestone-name">Reexposición (Retorno del tema principal)</h4>
+            </div>
+
+            <p class="what-to-listen">Regresa el tema A con su furia inicial, pero esta vez la tensión se siente aún mayor porque sabemos hacia dónde nos dirige el discurso musical. Todos los temas vuelven a la tonalidad principal de do sostenido menor.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Reapariencia de los arpegios ascendentes relampagueantes y del tema secundario expresivo, ahora articulados con mayor severidad y aplomo.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Soporte de bajos firmes en staccato y acompañamientos arpegiados impecables que mantienen el motor rítmico a máxima velocidad.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Mantén el tempo constante sin acelerar en los pasajes más fuertes para que la reexposición no pierda su pulso estructural.
+            </div>
+            
+
+          </div>
+          
+          <div class="milestone-card"
+               id="m-5-6"
+               data-start="360"
+               data-end="462"
+               onclick="seekToSecond(360)">
+
+            <div class="milestone-header">
+              <span class="milestone-tag">⏱️ 06:00 - 07:42</span>
+              <h4 class="milestone-name">Coda monumental y Cadencia final</h4>
+            </div>
+
+            <p class="what-to-listen">La parte final se expande extraordinariamente. Escucha una pausa inesperada casi silenciosa seguida de una cascada virtuosística de arpegios descending y un cierre con acordes gigantescos definitivos.</p>
+
+            <div class="hands-breakdown">
+              <div class="hand-box right-hand">
+                <div class="hand-label">🎹 Mano Derecha (Melodía / Textura)</div>
+                <p>Ejecuta pasajes arpegiados descendentes y ascendentes a lo largo de todo el teclado, concluyendo con una serie de acordes llenos y resonantes en fortissimo.</p>
+              </div>
+              <div class="hand-box left-hand">
+                <div class="hand-label">🎼 Mano Izquierda (Bajo / Armonía)</div>
+                <p>Sostiene acordes graves y octavas potentes en el registro más bajo del piano creando el cimiento monumental sobre el que concluye la obra.</p>
+              </div>
+            </div>
+
+            
+            <div class="pedagogical-tip">
+              <strong>💡 Consejo para el Piano:</strong> Escucha el silencio justo antes de los arpegios finales; ese momento de pausa es tan importante como las notas aceleradas.
+            </div>
+            
+
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- Evidencia y Fuentes -->
+      
+      <details class="sources-accordion">
+        <summary>📚 Fuentes consultadas y referencias musicológicas</summary>
+        <ul class="sources-list">
+          
+          <li>Fuente IMSLP: Ludwig van Beethoven - Piano Sonata No. 14 in C-sharp minor, Op. 27 No. 2 &#39;Moonlight&#39;, Mov. III Presto agitato (200 compases, C# minor).</li>
+          
+          <li>Fuente Wikipedia: Piano Sonata No. 14 (Beethoven) - III. Presto agitato en forma sonata con trayectoria &#39;end-weighted&#39; y cita de Franz Liszt &#39;a flower between two chasms&#39;.</li>
+          
+          <li>Fuente PianoTV.net: Análisis del 3er movimiento Presto agitato, carácter dramático, contraste dinámico p a sfz y estructura sonata.</li>
+          
+        </ul>
+      </details>
+      
+
+    </article>
+    
+  </main>
+
+  <!-- Barra Fija del Reproductor / Cronómetro Sincronizador -->
+  <footer class="player-dock">
+    <!-- Barra de progreso interactiva -->
+    <div class="player-progress-bar-wrap" id="progressBarWrap" onclick="handleProgressBarClick(event)">
+      <div class="player-progress-bar-fill" id="progressBarFill"></div>
+    </div>
+
+    <div class="player-controls-row">
+      <div class="player-track-info" id="currentTrackTitleDisplay">Pista activa</div>
+
+      <div class="player-buttons">
+        <button class="ctrl-btn" onclick="adjustTime(-5)" title="Retroceder 5 segundos">-5s</button>
+        <button class="ctrl-btn play-btn" id="playPauseBtn" onclick="togglePlayPause()">▶ Play</button>
+        <button class="ctrl-btn" onclick="adjustTime(+5)" title="Avanzar 5 segundos">+5s</button>
+        <button class="ctrl-btn" onclick="resetTimer()" title="Reiniciar cronómetro">Reset</button>
+      </div>
+
+      <div class="sync-hint">Inicia el cronómetro al dar Play en Apple Music</div>
+
+      <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+    </div>
+  </footer>
+
+  <!-- JavaScript 100% Vanilla Autocontenido -->
+  <script>
+    (function () {
+      let currentTrackIndex = 0;
+      let currentSeconds = 0;
+      let isPlaying = false;
+      let timerInterval = null;
+      let trackDuration = 0;
+
+      // Elementos del DOM
+      const playPauseBtn = document.getElementById("playPauseBtn");
+      const timeDisplay = document.getElementById("timeDisplay");
+      const progressBarFill = document.getElementById("progressBarFill");
+      const currentTrackTitleDisplay = document.getElementById("currentTrackTitleDisplay");
+      const trackTabs = document.querySelectorAll(".track-tab-btn");
+      const trackViews = document.querySelectorAll(".track-view");
+
+      function formatTime(secs) {
+        const m = Math.floor(secs / 60);
+        const s = Math.floor(secs % 60);
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      }
+
+      function updateDisplay() {
+        timeDisplay.textContent = `${formatTime(currentSeconds)} / ${formatTime(trackDuration)}`;
+        const percent = trackDuration > 0 ? (currentSeconds / trackDuration) * 100 : 0;
+        progressBarFill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+        highlightActiveMilestone();
+      }
+
+      function highlightActiveMilestone() {
+        const activeView = document.getElementById(`track-view-${currentTrackIndex}`);
+        if (!activeView) return;
+
+        const cards = activeView.querySelectorAll(".milestone-card");
+        let activeCard = null;
+
+        cards.forEach((card) => {
+          const start = parseInt(card.getAttribute("data-start"), 10);
+          const end = parseInt(card.getAttribute("data-end"), 10);
+
+          if (currentSeconds >= start && currentSeconds < end) {
+            if (!card.classList.contains("active")) {
+              card.classList.add("active");
+              // Auto-scroll suave si no está visible
+              card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+            activeCard = card;
+          } else {
+            card.classList.remove("active");
+          }
+        });
+      }
+
+      window.togglePlayPause = function () {
+        if (isPlaying) {
+          pauseTimer();
+        } else {
+          startTimer();
+        }
+      };
+
+      function startTimer() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playPauseBtn.textContent = "⏸ Pausa";
+        playPauseBtn.style.background = "#60a5fa";
+
+        timerInterval = setInterval(() => {
+          if (currentSeconds < trackDuration) {
+            currentSeconds++;
+            updateDisplay();
+          } else {
+            pauseTimer();
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        isPlaying = false;
+        clearInterval(timerInterval);
+        playPauseBtn.textContent = "▶ Play";
+        playPauseBtn.style.background = "var(--accent-gold)";
+      }
+
+      window.resetTimer = function () {
+        pauseTimer();
+        currentSeconds = 0;
+        updateDisplay();
+      };
+
+      window.adjustTime = function (delta) {
+        currentSeconds = Math.max(0, Math.min(trackDuration, currentSeconds + delta));
+        updateDisplay();
+      };
+
+      window.seekToSecond = function (second) {
+        currentSeconds = Math.max(0, Math.min(trackDuration, second));
+        updateDisplay();
+      };
+
+      window.handleProgressBarClick = function (e) {
+        const barWrap = document.getElementById("progressBarWrap");
+        const rect = barWrap.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        if (width > 0 && trackDuration > 0) {
+          const ratio = Math.max(0, Math.min(1, clickX / width));
+          currentSeconds = Math.round(ratio * trackDuration);
+          updateDisplay();
+        }
+      };
+
+      function selectTrack(index) {
+        pauseTimer();
+        currentTrackIndex = index;
+        currentSeconds = 0;
+
+        // Actualizar tabs
+        trackTabs.forEach((tab, i) => {
+          tab.classList.toggle("active", i === index);
+        });
+
+        // Actualizar vistas
+        trackViews.forEach((view, i) => {
+          view.classList.toggle("active", i === index);
+        });
+
+        const activeTab = trackTabs[index];
+        if (activeTab) {
+          trackDuration = parseInt(activeTab.getAttribute("data-duration"), 10) || 180;
+          currentTrackTitleDisplay.textContent = activeTab.getAttribute("data-title") || `Pista ${index + 1}`;
+        }
+
+        updateDisplay();
+      }
+
+      // Event Listeners para las pestañas
+      trackTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const idx = parseInt(tab.getAttribute("data-track-index"), 10);
+          selectTrack(idx);
+        });
+      });
+
+      // Inicialización con la primera pista
+      if (trackTabs.length > 0) {
+        selectTrack(0);
+      }
+    })();
+  </script>
+</body>
+</html>
