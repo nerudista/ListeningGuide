@@ -27,6 +27,9 @@ class AlbumMetadata(BaseModel):
     release_year: Optional[int] = Field(None, description="Año de lanzamiento o grabación")
     album_url: str = Field(..., description="URL original del álbum en Apple Music")
     tracks: List[TrackInfo] = Field(default_factory=list, description="Lista ordenada de pistas del álbum")
+    editorial_notes: Optional[str] = Field(
+        None, description="Descripción editorial del álbum publicada por Apple Music (párrafos separados por saltos de línea)"
+    )
 
     @property
     def total_duration_seconds(self) -> int:

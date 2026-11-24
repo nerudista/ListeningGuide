@@ -232,7 +232,40 @@ class AppleMusicExtractor:
             release_year=release_year,
             album_url=source_url,
             tracks=tracks,
+            editorial_notes=self._extract_editorial_notes(soup),
         )
+
+    @staticmethod
+    def _extract_editorial_notes(soup: BeautifulSoup) -> Optional[str]:
+        """
+        Obtiene la descripción editorial de Apple Music. No está en el JSON-LD (ese campo es genérico),
+        sino en el bloque serializado #serialized-server-data, bajo 'modalPresentationDescriptor.paragraphText'.
+        """
+        script = soup.find("script", id="serialized-server-data")
+        if not script:
+            return None
+        try:
+            data = json.loads(script.get_text())
+        except (json.JSONDecodeError, TypeError):
+            return None
+
+        def find_paragraph(node: Any) -> Optional[str]:
+            if isinstance(node, dict):
+                mpd = node.get("modalPresentationDescriptor")
+                if isinstance(mpd, dict) and isinstance(mpd.get("paragraphText"), str):
+                    return mpd["paragraphText"].strip() or None
+                for value in node.values():
+                    found = find_paragraph(value)
+                    if found:
+                        return found
+            elif isinstance(node, list):
+                for value in node:
+                    found = find_paragraph(value)
+                    if found:
+                        return found
+            return None
+
+        return find_paragraph(data)
 
     def extract(self, url: str) -> AlbumMetadata:
         """Punto de entrada principal: descarga la URL y extrae la metadata."""
